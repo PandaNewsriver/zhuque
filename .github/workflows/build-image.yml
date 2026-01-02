@@ -2,19 +2,21 @@ name: Build Base Image
 
 on:
   push:
-    branches: [ "develop", "master", "main" ] # 只要修改代码就触发
+    # 包含了你现在的 develop 分支，以及常见的 master/main
+    branches: [ "develop", "master", "main" ]
   workflow_dispatch: # 允许手动点击触发
 
 env:
-  # 镜像地址会自动变成: ghcr.io/你的用户名/仓库名
-  IMAGE_NAME: ghcr.io/${{ github.repository }}
+  # 【重要修改】这里必须全小写！
+  # 我已经帮你把 PandaNewsriver 改成了 pandanewsriver
+  IMAGE_NAME: ghcr.io/pandanewsriver/zhuque
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write # 赋予写入权限，这行很关键！
+      packages: write # 赋予上传镜像的权限
 
     steps:
       - name: Checkout repository
@@ -25,7 +27,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }} # 自动生成，无需配置
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
