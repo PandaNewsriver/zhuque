@@ -1,0 +1,35 @@
+name: Build Base Image
+
+on:
+  push:
+    branches: [ "develop", "master", "main" ] # 只要修改代码就触发
+  workflow_dispatch: # 允许手动点击触发
+
+env:
+  # 镜像地址会自动变成: ghcr.io/你的用户名/仓库名
+  IMAGE_NAME: ghcr.io/${{ github.repository }}
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write # 赋予写入权限，这行很关键！
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }} # 自动生成，无需配置
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: ${{ env.IMAGE_NAME }}:latest
