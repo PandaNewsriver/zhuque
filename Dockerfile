@@ -40,7 +40,7 @@ RUN git clone --depth=1 https://github.com/whyour/qinglong-static.git /ql/static
 # 7. 安装项目依赖 (最关键的一步)
 #    - 删除 lock 文件，避免版本锁死
 #    - pnpm install: 安装所有依赖
-#    - pnpm add: 强制在本地再装一遍运行工具，双重保险
+#    - 【绝杀】pnpm add: 强制在本地再装一遍运行工具，确保 PM2 能调用
 RUN rm -f pnpm-lock.yaml \
     && pnpm install \
     && pnpm add -D ts-node typescript
